@@ -1,0 +1,19 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-display: 'Nunito', ui-sans-serif, system-ui, sans-serif;
+
+  /* Paleta extraida del diseno de Figma */
+  --color-amber-accent: #ffc13c;
+  --color-calculator-surface: rgba(25, 25, 25, 0.9);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-display);
+}
