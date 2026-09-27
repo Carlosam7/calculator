@@ -1,6 +1,8 @@
 # Calculator
 
-A web-based calculator application built with **React + TypeScript** on the frontend and **Go** on the backend. The project is designed to run both locally for development and through Docker Compose for a containerized environment.
+A web-based calculator application built with **React + TypeScript** on the frontend and **Go** on the backend.
+
+The application is designed with a separated frontend/backend architecture and can be run either locally for development or using Docker Compose.
 
 ## Technologies
 
@@ -11,19 +13,17 @@ A web-based calculator application built with **React + TypeScript** on the fron
 - Vite
 - Tailwind CSS
 - pnpm
-- Nginx
 
 ### Backend
 
 - Go 1.27+
 - REST API
-- Docker
-- Distroless
 
 ### Infrastructure
 
 - Docker
 - Docker Compose
+- Nginx
 
 ## Project Structure
 
@@ -37,7 +37,6 @@ calculator/
 │   ├── Dockerfile
 │   ├── nginx.conf
 │   ├── package.json
-│   ├── pnpm-lock.yaml
 │   └── ...
 │
 ├── calculator-back/
@@ -52,9 +51,11 @@ calculator/
 └── README.md
 ```
 
-## Requirements
+# Setup
 
-To run the project locally, make sure you have the following installed:
+## Prerequisites
+
+Make sure the following tools are installed:
 
 - Node.js 22+
 - pnpm
@@ -62,82 +63,14 @@ To run the project locally, make sure you have the following installed:
 - Docker
 - Docker Compose
 
-## Running with Docker
-
-The recommended way to run the complete application is using Docker Compose.
-
-From the project root:
+## Clone the repository
 
 ```bash
-docker compose up --build
+git clone <repository-url>
+cd calculator
 ```
 
-The services will be available at:
-
-| Service  | URL                   |
-| -------- | --------------------- |
-| Frontend | http://localhost:3000 |
-| Backend  | http://localhost:8080 |
-
-To run the services in the background:
-
-```bash
-docker compose up --build -d
-```
-
-To stop the services:
-
-```bash
-docker compose down
-```
-
-To check the status of the containers:
-
-```bash
-docker compose ps
-```
-
-To view the logs:
-
-```bash
-docker compose logs -f
-```
-
-To view only the backend logs:
-
-```bash
-docker compose logs -f backend
-```
-
-To view only the frontend logs:
-
-```bash
-docker compose logs -f frontend
-```
-
-## Environment Variables
-
-Docker Compose supports configuring the application ports and backend URL through environment variables.
-
-Default values:
-
-```env
-BACKEND_PORT=8080
-FRONTEND_PORT=3000
-VITE_API_BASE_URL=http://localhost:8080
-```
-
-These variables can also be defined in a `.env` file:
-
-```env
-BACKEND_PORT=8080
-FRONTEND_PORT=3000
-VITE_API_BASE_URL=http://localhost:8080
-```
-
-> `VITE_API_BASE_URL` must point to a URL accessible from the user's browser. Therefore, `http://backend:8080` should not be used for this variable.
-
-## Frontend Development
+## Frontend setup
 
 Navigate to the frontend directory:
 
@@ -151,14 +84,196 @@ Install dependencies:
 pnpm install
 ```
 
+Create a `.env` file if necessary:
+
+```env
+VITE_API_BASE_URL=http://localhost:8080
+```
+
 Start the development server:
 
 ```bash
 pnpm dev
 ```
 
-By default, Vite will be available at:
+The frontend will be available at:
 
 ```text
-http://localhos
+http://localhost:5173
 ```
+
+## Backend setup
+
+Open another terminal and navigate to the backend:
+
+```bash
+cd calculator-back
+```
+
+Download dependencies:
+
+```bash
+go mod download
+```
+
+Run the server:
+
+```bash
+go run ./cmd/server
+```
+
+The backend will be available at:
+
+```text
+http://localhost:8080
+```
+
+# Running with Docker
+
+The entire application can also be started using Docker Compose.
+
+From the project root:
+
+```bash
+docker compose up --build
+```
+
+The application will be available at:
+
+```text
+http://localhost:3000
+```
+
+The backend will be available at:
+
+```text
+http://localhost:8080
+```
+
+To run the application in the background:
+
+```bash
+docker compose up --build -d
+```
+
+To stop the containers:
+
+```bash
+docker compose down
+```
+
+To check the running services:
+
+```bash
+docker compose ps
+```
+
+To view logs:
+
+```bash
+docker compose logs -f
+```
+
+# Environment Variables
+
+The following environment variables can be configured through a `.env` file:
+
+```env
+BACKEND_PORT=8080
+FRONTEND_PORT=3000
+VITE_API_BASE_URL=http://localhost:8080
+```
+
+The default values are used when the variables are not explicitly defined.
+
+> `VITE_API_BASE_URL` must use an address accessible from the user's browser. The Docker service name `backend` should not be used here because the API request is made by the browser, not directly by the frontend container.
+
+# API
+
+The backend exposes a REST API for calculator operations.
+
+## Calculate an expression
+
+### Request
+
+```http
+POST /calculate
+Content-Type: application/json
+```
+
+### Request body
+
+```json
+{
+  "expression": "5 + 3 * 2"
+}
+```
+
+### Example using cURL
+
+```bash
+curl -X POST http://localhost:8080/calculate \
+  -H "Content-Type: application/json" \
+  -d '{"expression":"5 + 3 * 2"}'
+```
+
+### Example response
+
+```json
+{
+  "result": 11
+}
+```
+
+The frontend uses this API to evaluate the expression entered by the user.
+
+> The exact endpoint and request/response format should match the implementation exposed by the backend.
+
+# Design Decisions and Assumptions
+
+## Frontend and backend separation
+
+The application separates the user interface from the calculation logic.
+
+The frontend is responsible for:
+
+- Rendering the calculator interface.
+- Handling user interactions.
+- Building the mathematical expression.
+- Sending expressions to the backend.
+- Displaying the result.
+
+The backend is responsible for:
+
+- Receiving mathematical expressions.
+- Evaluating expressions.
+- Returning the calculated result.
+- Handling invalid expressions and calculation errors.
+
+This separation keeps the UI independent from the calculation implementation.
+
+## Expression-based calculation
+
+The calculator builds the expression as the user interacts with the interface.
+
+For example:
+
+```text
+5
+5 +
+5 + 3
+5 + 3 ×
+5 + 3 × 2
+```
+
+When the user presses `=`, the complete expression is sent to the backend for evaluation.
+
+## API-based calculation
+
+The frontend does not perform the final calculation itself. Instead, it delegates expression evaluation to the backend through the REST API.
+
+This provides a clear separation of responsibilities and allows the calculation logic to be tested independently from the UI.
+
+## REST API
+
+REST was selected as the commu
