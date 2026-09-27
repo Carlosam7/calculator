@@ -6,10 +6,14 @@ import (
 	"github.com/Carlosam7/calculator/internal/interfaces/http/handlers"
 )
 
-func SetupRoutes(healthHandler *handlers.HealthHandler) http.Handler {
+func SetupRoutes(
+	healthHandler *handlers.HealthHandler,
+	calculatorHandler *handlers.CalculatorHandler,
+) http.Handler {
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("GET /api/v1/health", healthHandler.Check)
+	mux.HandleFunc("GET /api/health", healthHandler.Check)
+	mux.HandleFunc("POST /api/calculate/evaluate", calculatorHandler.Evaluate)
 
 	return mux
 }
