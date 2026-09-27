@@ -13,7 +13,7 @@ func SetupRoutes(
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("GET /api/health", healthHandler.Check)
-	mux.HandleFunc("POST /api/calculate/evaluate", calculatorHandler.Evaluate)
+	mux.HandleFunc("POST /api/calculator/evaluate", calculatorHandler.Evaluate)
 
 	return mux
 }
