@@ -88,7 +88,7 @@ func (p *Parser) parseTerm() (float64, error) {
 			}
 
 			if right == 0 {
-				return 0, fmt.Errorf("division by zero")
+				return 0, ErrDivisionByZero
 			}
 
 			result /= right
@@ -102,7 +102,7 @@ func (p *Parser) parseTerm() (float64, error) {
 			}
 
 			if right == 0 {
-				return 0, fmt.Errorf("division by zero")
+				return 0, ErrDivisionByZero
 			}
 
 			result = math.Mod(result, right)
@@ -162,6 +162,7 @@ func (p *Parser) parsePrimary() (float64, error) {
 		if err != nil {
 			return 0, fmt.Errorf(
 				"%w: invalid number %q",
+				ErrInvalidExpression,
 				token.Value,
 			)
 		}
@@ -175,6 +176,7 @@ func (p *Parser) parsePrimary() (float64, error) {
 		if p.current().Type != TokenLeftParen {
 			return 0, fmt.Errorf(
 				"%w: expected opening parenthesis after sqrt",
+				ErrMissingParen,
 			)
 		}
 
@@ -188,12 +190,14 @@ func (p *Parser) parsePrimary() (float64, error) {
 		if result < 0 {
 			return 0, fmt.Errorf(
 				"%w: cannot calculate square root of a negative number",
+				ErrInvalidExpression,
 			)
 		}
 
 		if p.current().Type != TokenRightParen {
 			return 0, fmt.Errorf(
 				"%w: expected closing parenthesis after sqrt",
+				ErrMissingParen,
 			)
 		}
 
@@ -212,6 +216,7 @@ func (p *Parser) parsePrimary() (float64, error) {
 		if p.current().Type != TokenRightParen {
 			return 0, fmt.Errorf(
 				"%w: expected closing parenthesis",
+				ErrMissingParen,
 			)
 		}
 
@@ -221,6 +226,7 @@ func (p *Parser) parsePrimary() (float64, error) {
 	default:
 		return 0, fmt.Errorf(
 			"%w: unexpected token %q",
+			ErrInvalidExpression,
 			token.Value,
 		)
 	}
@@ -229,7 +235,7 @@ func (p *Parser) parsePrimary() (float64, error) {
 func Parse(expression string) (float64, error) {
 	tokens, err := Tokenize(expression)
 	if err != nil {
-		return 0, fmt.Errorf("%w: %v", err)
+		return 0, fmt.Errorf("%w: %v", ErrInvalidExpression, err)
 	}
 
 	parser := newParser(tokens)
@@ -242,6 +248,7 @@ func Parse(expression string) (float64, error) {
 	if parser.current().Type != TokenEOF {
 		return 0, fmt.Errorf(
 			"%w: unexpected token %q",
+			ErrInvalidExpression,
 			parser.current().Value,
 		)
 	}
