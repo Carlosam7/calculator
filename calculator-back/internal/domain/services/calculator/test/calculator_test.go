@@ -81,12 +81,12 @@ func TestEvaluate(t *testing.T) {
 		{
 			name:       "modulo",
 			expression: "10 % 3",
-			expected:   1,
+			expected:   0.3,
 		},
 		{
 			name:       "modulo with expression",
 			expression: "(10 + 5) % 4",
-			expected:   3,
+			expected:   0.6,
 		},
 		{
 			name:       "square root",

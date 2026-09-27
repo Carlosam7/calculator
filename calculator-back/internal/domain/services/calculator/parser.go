@@ -105,7 +105,7 @@ func (p *Parser) parseTerm() (float64, error) {
 				return 0, ErrDivisionByZero
 			}
 
-			result = math.Mod(result, right)
+			result = result * right / 100
 
 		default:
 			return result, nil
