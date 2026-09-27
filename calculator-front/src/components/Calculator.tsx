@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { CalculatorApiError, evaluateExpression } from '../services/calculator';
+import { addToHistory, clearHistory, getHistory } from '../services/calculatorHistory';
 import type { CalculatorKey, HistoryEntry } from '../types/calculator';
 import { CalculatorDisplay } from './CalculatorDisplay';
 import { CalculatorKeypad } from './CalculatorKeypad';
-import { addToHistory, clearHistory, getHistory } from '../services/calculatorHistory';
 import { History } from './History';
 
 type Tab = 'calculator' | 'history';
@@ -15,7 +15,7 @@ export function Calculator() {
   const [isLoading, setIsLoading] = useState(false);
   const [tab, setTab] = useState<Tab>('calculator');
   const [history, setHistory] = useState<HistoryEntry[]>(() => getHistory());
-  
+  // true justo después de presionar "=": la siguiente tecla debe empezar una expresión nueva.
   const [justEvaluated, setJustEvaluated] = useState(false);
 
   async function handleKeyPress(key: CalculatorKey) {
@@ -77,12 +77,9 @@ export function Calculator() {
       case 'sqrt':
         setExpression(base + 'sqrt(');
         return;
-      case 'parenthesis': {
-        const openParens = (base.match(/\(/g) ?? []).length;
-        const closeParens = (base.match(/\)/g) ?? []).length;
-        setExpression(base + (openParens > closeParens ? ')' : '('));
+      case 'parenthesis':
+        setExpression(base + key.value);
         return;
-      }
     }
   }
 

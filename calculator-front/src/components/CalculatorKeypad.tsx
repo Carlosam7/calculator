@@ -99,7 +99,32 @@ export function CalculatorKeypad({ onKeyPress, disabled }: CalculatorKeypadProps
         onClick={() => onKeyPress({ type: 'operator', value: '%' })}
       />
 
-      <KeypadButton label="()" variant="muted" ariaLabel="Paréntesis" onClick={() => onKeyPress({ type: 'parenthesis' })} />
+      <div className="flex aspect-square gap-1.5">
+        <button
+          type="button"
+          onClick={() => onKeyPress({ type: 'parenthesis', value: '(' })}
+          aria-label="Paréntesis que abre"
+          className={[
+            'h-full flex-1 rounded-full text-lg transition-colors duration-150 sm:text-xl',
+            'hover:brightness-110 active:scale-95',
+            VARIANT_CLASSES.muted,
+          ].join(' ')}
+        >
+          (
+        </button>
+        <button
+          type="button"
+          onClick={() => onKeyPress({ type: 'parenthesis', value: ')' })}
+          aria-label="Paréntesis que cierra"
+          className={[
+            'h-full flex-1 rounded-full text-lg transition-colors duration-150 sm:text-xl',
+            'hover:brightness-110 active:scale-95',
+            VARIANT_CLASSES.muted,
+          ].join(' ')}
+        >
+          )
+        </button>
+      </div>
       <KeypadButton label="0" variant="muted" ariaLabel="0" onClick={() => onKeyPress({ type: 'digit', value: '0' })} />
       <KeypadButton label="." variant="muted" ariaLabel="Punto decimal" onClick={() => onKeyPress({ type: 'decimal' })} />
       <KeypadButton

@@ -31,7 +31,7 @@ export type CalculatorKey =
   | { type: 'operator'; value: '+' | '-' | '*' | '/' | '%' | '^' }
   | { type: 'sqrt' }
   | { type: 'decimal' }
-  | { type: 'parenthesis' }
+  | { type: 'parenthesis'; value: '(' | ')' }
   | { type: 'clear' }
   | { type: 'backspace' }
   | { type: 'equals' };
