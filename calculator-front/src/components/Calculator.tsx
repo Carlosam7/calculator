@@ -83,7 +83,7 @@ export function Calculator() {
   }
 
   return (
-    <div className="flex h-180 w-full max-w-105 flex-col overflow-hidden rounded-[25px] bg-calculator-surface shadow-2xl sm:h-[820px]">
+    <div className="flex h-screen w-full md:max-w-105 flex-col overflow-auto md:rounded-[25px] p-5 bg-calculator-surface shadow-2xl md:h-205">
       <div className="flex gap-8 border-b border-white/30 px-8 pt-6" role="tablist">
         <button
           type="button"
