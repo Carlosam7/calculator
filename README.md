@@ -276,4 +276,152 @@ This provides a clear separation of responsibilities and allows the calculation 
 
 ## REST API
 
-REST was selected as the commu
+REST was selected as the communication mechanism because the application has a relatively simple request/response interaction between the frontend and backend.
+
+The frontend sends an expression and the backend returns the calculated result.
+
+## Containerization
+
+Docker Compose is used to run both services together:
+
+```text
+                    Docker Compose
+                         │
+             ┌───────────┴───────────┐
+             │                       │
+             ▼                       ▼
+        Frontend                 Backend
+        React/Vite                Go API
+        Nginx                     Port 8080
+        Port 3000
+```
+
+The frontend is built using Node.js and served using Nginx in the production container.
+
+The backend is compiled using Go and runs using a lightweight Distroless image.
+
+## Browser-to-backend communication
+
+When running with Docker, the browser accesses:
+
+```text
+http://localhost:3000
+```
+
+and API requests are sent to:
+
+```text
+http://localhost:8080
+```
+
+The Docker service name `backend` is intended for container-to-container communication and is therefore not used as the browser-facing API URL.
+
+## Error handling
+
+Invalid expressions should return an appropriate HTTP error response from the backend rather than causing the application to crash.
+
+The frontend should display an appropriate error state when the API request fails or when the backend rejects an expression.
+
+# Development Commands
+
+## Frontend
+
+Install dependencies:
+
+```bash
+pnpm install
+```
+
+Run development server:
+
+```bash
+pnpm dev
+```
+
+Build for production:
+
+```bash
+pnpm build
+```
+
+Preview production build:
+
+```bash
+pnpm preview
+```
+
+Run tests:
+
+```bash
+pnpm test
+```
+
+## Backend
+
+Download dependencies:
+
+```bash
+go mod download
+```
+
+Run the server:
+
+```bash
+go run ./cmd/server
+```
+
+Build the application:
+
+```bash
+go build -o bin/server ./cmd/server
+```
+
+Run Go tests:
+
+```bash
+go test ./...
+```
+
+# Testing
+
+The frontend uses:
+
+- Vitest
+- React Testing Library
+- Testing Library User Event
+
+Frontend tests cover component behavior and user interactions.
+
+The backend uses Go's built-in testing framework.
+
+Run frontend tests:
+
+```bash
+pnpm test
+```
+
+Run backend tests:
+
+```bash
+go test ./...
+```
+
+# Project Status
+
+- [x] Calculator UI
+- [x] React + TypeScript
+- [x] Tailwind CSS
+- [x] Go backend
+- [x] REST API
+- [x] Docker configuration
+- [x] Docker Compose
+- [x] Nginx configuration
+- [x] Complete frontend/backend integration
+- [x] Complete expression evaluation
+- [x] Comprehensive backend unit tests
+- [ ] Comprehensive frontend unit tests
+- [ ] CI/CD
+
+# License
+
+This project is intended for academic and/or personal use.
