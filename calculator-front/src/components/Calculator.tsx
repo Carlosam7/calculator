@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { CalculatorApiError, evaluateExpression } from '../services/calculator';
-import type { CalculatorKey } from '../types/calculator';
+import type { CalculatorKey, HistoryEntry } from '../types/calculator';
 import { CalculatorDisplay } from './CalculatorDisplay';
 import { CalculatorKeypad } from './CalculatorKeypad';
+import { addToHistory, clearHistory, getHistory } from '../services/calculatorHistory';
+import { History } from './History';
 
 type Tab = 'calculator' | 'history';
 
@@ -12,6 +14,7 @@ export function Calculator() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [tab, setTab] = useState<Tab>('calculator');
+  const [history, setHistory] = useState<HistoryEntry[]>(() => getHistory());
   
   const [justEvaluated, setJustEvaluated] = useState(false);
 
@@ -42,6 +45,7 @@ export function Calculator() {
       try {
         const response = await evaluateExpression(expression);
         setResult(response.result);
+        setHistory(addToHistory(response.expression, response.result));
         setJustEvaluated(true);
       } catch (err) {
         setError(err instanceof CalculatorApiError ? err.message : 'No se pudo calcular la expresión.');
@@ -82,8 +86,20 @@ export function Calculator() {
     }
   }
 
+  function handleSelectHistoryEntry(entry: HistoryEntry) {
+    setExpression(String(entry.result));
+    setResult(null);
+    setError(null);
+    setJustEvaluated(false);
+    setTab('calculator');
+  }
+
+  function handleClearHistory() {
+    setHistory(clearHistory());
+  }
+
   return (
-    <div className="flex h-180 w-full max-w-105 flex-col overflow-hidden rounded-[25px] bg-calculator-surface shadow-2xl sm:h-[820px]">
+    <div className="flex h-screen w-full md:max-w-105 flex-col overflow-auto md:rounded-[25px] p-5 bg-calculator-surface shadow-2xl md:h-205">
       <div className="flex gap-8 border-b border-white/30 px-8 pt-6" role="tablist">
         <button
           type="button"
@@ -119,7 +135,7 @@ export function Calculator() {
           </div>
         </>
       ) : (
-        <div className="w-full max-w-105">History</div>
+        <History entries={history} onClear={handleClearHistory} onSelect={handleSelectHistoryEntry} />
       )}
     </div>
   );
