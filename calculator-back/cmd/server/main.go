@@ -6,6 +6,7 @@ import (
 
 	"github.com/rs/cors"
 
+	"github.com/Carlosam7/calculator/internal/application/calculator"
 	"github.com/Carlosam7/calculator/internal/interfaces/http/handlers"
 	"github.com/Carlosam7/calculator/internal/interfaces/http/routes"
 )
@@ -19,7 +20,8 @@ func main() {
 		AllowedHeaders: []string{"*"},
 	})
 
-	router := routes.SetupRoutes(healtHandler)
+	calculatorHandler := handlers.NewCalculatorHandler(calculator.NewService())
+	router := routes.SetupRoutes(healtHandler, calculatorHandler)
 
 	server := &http.Server{
 		Addr:    ":8080",
